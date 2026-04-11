@@ -11,14 +11,14 @@ const app = express();
 const serveurHttp = http.createServer(app);
 const io = new Server(serveurHttp, {
   cors: {
-    origin: ['http://127.0.0.1:5500', 'https://codebyduel.netlify.app'],
+    origin: ['http://127.0.0.1:5500', 'https://codedbyduel.netlify.app'],
     methods: ['GET', 'POST']
   }
 });
 
 // ===== MIDDLEWARES =====
 app.use(cors({
-  origin: ['http://127.0.0.1:5500', 'https://codebyduel.netlify.app'],
+  origin: ['http://127.0.0.1:5500', 'https://codedbyduel.netlify.app'],
   methods: ['GET', 'POST', 'PUT', 'DELETE']
 }));
 app.use(express.json());
