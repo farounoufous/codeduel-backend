@@ -16,14 +16,14 @@ module.exports = (io) => {
         nombre: Object.keys(joueurConnectes).length
       });
       console.log(`👤 ${nom} a rejoint la salle`);
-      if (Object.keys(joueurConnectes).length >= 1 && !partieEnCours) {
+      if (Object.keys(joueurConnectes).length >=1 && !partieEnCours) {
         demarrerPartie();
       }
     });
 
     // ===== UN JOUEUR ENVOIE SON SCORE =====
     socket.on('envoyer-score', (data) => {
-      if (joueurConnectes[socket.id]) {
+    if (joueurConnectes[socket.id]) {
         joueurConnectes[socket.id].score = data.score;
         io.to('salle-jeu').emit('classement', getClassement());
       }
