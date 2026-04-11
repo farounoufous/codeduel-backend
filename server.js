@@ -30,20 +30,7 @@ app.use('/api/paiement', require('./routes/paiement'));
 
 require('./socket/jeu')(io);
 
-// ===== KEEP ALIVE =====
-const https = require('https');
-setInterval(() => {
-  https.get('https://codeduel-backend.onrender.com/health', (res) => {
-    console.log('💓 Keep-alive ping:', res.statusCode);
-  }).on('error', (err) => {
-    console.log('Keep-alive error:', err.message);
-  });
-}, 10 * 60 * 1000);
 
-// Route health check
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
-});
 
 // ===== CONNEXION MONGODB =====
 mongoose.connect(process.env.MONGODB_URI)
