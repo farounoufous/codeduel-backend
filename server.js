@@ -10,11 +10,17 @@ if (process.env.NODE_ENV !== 'production') {
 const app = express();
 const serveurHttp = http.createServer(app);
 const io = new Server(serveurHttp, {
-  cors: { origin: '*' }
+  cors: {
+    origin: ['http://127.0.0.1:5500', 'https://codebyduel.netlify.app'],
+    methods: ['GET', 'POST']
+  }
 });
 
 // ===== MIDDLEWARES =====
-app.use(cors());
+app.use(cors({
+  origin: ['http://127.0.0.1:5500', 'https://codebyduel.netlify.app'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE']
+}));
 app.use(express.json());
 
 // ===== ROUTES =====
