@@ -12,16 +12,20 @@ const serveurHttp = http.createServer(app);
 const io = new Server(serveurHttp, {
   cors: {
     origin: ['http://127.0.0.1:5500', 'https://codedbyduel.netlify.app'],
-    methods: ['GET', 'POST']
+    methods: ['GET', 'POST'],
+    credentials: true
   }
 });
 
 // ===== MIDDLEWARES =====
 app.use(cors({
   origin: ['http://127.0.0.1:5500', 'https://codedbyduel.netlify.app'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+   credentials: true
 }));
 app.use(express.json());
+app.options('*', cors());
+
 
 // ===== ROUTES =====
 app.use('/api/joueurs', require('./routes/joueurs'));
