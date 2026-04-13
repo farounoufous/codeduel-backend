@@ -62,7 +62,7 @@ module.exports = (io) => {
   partieEnCours = true;
   console.log('🎮 Partie démarrée !');
 
-  let compte = 5;
+  let compte = 3;
   const timer = setInterval(() => {
     io.to('salle-jeu').emit('compte-rebours', { compte });
     compte--;

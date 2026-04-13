@@ -24,7 +24,7 @@ app.use(cors({
    credentials: true
 }));
 app.use(express.json());
-app.options('*', cors());
+app.options('.*', cors());
 
 
 // ===== ROUTES =====
