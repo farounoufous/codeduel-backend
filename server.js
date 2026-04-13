@@ -12,7 +12,7 @@ const app = express();
 const serveurHttp = http.createServer(app);
 
 const originesAutorisees = [
-  'https://codedbyduel.netlify.app',
+  'https://codebyduel.netlify.app',
   'http://127.0.0.1:5500'
 ];
 
