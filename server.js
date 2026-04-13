@@ -12,8 +12,8 @@ const app = express();
 const serveurHttp = http.createServer(app);
 
 const originesAutorisees = [
-  'http://127.0.0.1:5500',
-  'https://codedbyduel.netlify.app'
+  'https://codedbyduel.netlify.app',
+  'http://127.0.0.1:5500'
 ];
 
 const io = new Server(serveurHttp, {
@@ -41,7 +41,7 @@ app.get('/health', (req, res) => {
 // ===== KEEP ALIVE =====
 const https = require('https');
 setInterval(() => {
-  https.get('https://codeduel-backend.onrender.com/health', (res) => {
+  https.get('https://codedbyduel-backend.onrender.com/health', (res) => {
     console.log('💓 Keep-alive:', res.statusCode);
   }).on('error', (err) => {
     console.log('Keep-alive error:', err.message);

@@ -6,7 +6,7 @@ const Partie = require('../models/Partie');
 
 // Configurer FedaPay
 FedaPay.setApiKey(process.env.FEDAPAY_SECRET_KEY);
-FedaPay.setEnvironment(process.env.FEDAPAY_ENV || 'sandbox');
+FedaPay.setEnvironment(process.env.FEDAPAY_ENV || 'live');
 
 // ===== INITIER UN PAIEMENT =====
 router.post('/initier', async (req, res) => {
