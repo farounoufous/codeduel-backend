@@ -41,7 +41,7 @@ app.get('/health', (req, res) => {
 // ===== KEEP ALIVE =====
 const https = require('https');
 setInterval(() => {
-  https.get('https://codedbyduel-backend.onrender.com/health', (res) => {
+  https.get('https://codeduel-backend-w2p6.onrender.com/health', (res) => {
     console.log('💓 Keep-alive:', res.statusCode);
   }).on('error', (err) => {
     console.log('Keep-alive error:', err.message);
