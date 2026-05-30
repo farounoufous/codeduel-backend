@@ -57,7 +57,7 @@ router.post('/rejoindre', async (req, res) => {
     partie.cagnotte += 300;
 
     // Démarrer la partie si 20 joueurs sont réunis
-    if (partie.joueurs.length >= 20) {
+    if (partie.joueurs.length >= 10) {
       partie.statut = 'en_cours';
     }
 

@@ -14,8 +14,8 @@ router.post('/initier', async (req, res) => {
     const { joueurId, telephone, nom } = req.body;
 
     const transaction = await Transaction.create({
-      description: 'Mise CodeDuel - 300 FCFA',
-      amount: 300,
+      description: 'Mise CodeDuel - 100 FCFA',
+      amount: 100,
       currency: { iso: 'XOF' },
       callback_url: `${process.env.APP_URL}/api/paiement/callback`,
       customer: {
