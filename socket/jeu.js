@@ -112,11 +112,12 @@
 
 module.exports = (io) => {
 
-  const JOUEURS_MIN = 4;
+  const JOUEURS_MIN = 6;
 
   let joueurConnectes = {};
   let partieEnCours = false;
-  let hote = null; // ← socket.id du premier joueur
+  let countdownEnCours = false;
+  let hote = null;
 
   io.on('connection', (socket) => {
     console.log(`🟢 Joueur connecté : ${socket.id}`);
@@ -125,10 +126,9 @@ module.exports = (io) => {
     socket.on('rejoindre', (data) => {
       const { joueurId, nom } = data;
 
-      // Le premier joueur devient l'hôte
       if (Object.keys(joueurConnectes).length === 0) {
         hote = socket.id;
-        console.log(`👑 ${nom} est l'hôte de la partie`);
+        console.log(`👑 ${nom} est l'hôte`);
       }
 
       joueurConnectes[socket.id] = {
@@ -138,7 +138,6 @@ module.exports = (io) => {
       };
 
       socket.join('salle-jeu');
-
       const nombre = Object.keys(joueurConnectes).length;
 
       io.to('salle-jeu').emit('mise-a-jour-salle', {
@@ -146,13 +145,32 @@ module.exports = (io) => {
         nombre,
         requis: JOUEURS_MIN,
         enAttente: nombre < JOUEURS_MIN,
-        hote // ← chaque client sait qui est l'hôte
+        hote
       });
 
       console.log(`👤 ${nom} a rejoint la salle (${nombre}/${JOUEURS_MIN})`);
+
+      // Lancement automatique après 5s quand JOUEURS_MIN atteint
+      if (nombre >= JOUEURS_MIN && !partieEnCours && !countdownEnCours) {
+        countdownEnCours = true;
+        let compte = 5;
+
+        io.to('salle-jeu').emit('lancement-imminent', { compte });
+
+        const timer = setInterval(() => {
+          compte--;
+          if (compte > 0) {
+            io.to('salle-jeu').emit('lancement-imminent', { compte });
+          } else {
+            clearInterval(timer);
+            countdownEnCours = false;
+            demarrerPartie();
+          }
+        }, 1000);
+      }
     });
 
-    // ===== L'HÔTE LANCE LA PARTIE MANUELLEMENT =====
+    // ===== L'HÔTE LANCE MANUELLEMENT =====
     socket.on('lancer-partie', () => {
       if (socket.id !== hote) {
         socket.emit('erreur', { message: "Seul l'hôte peut lancer la partie." });
@@ -160,11 +178,11 @@ module.exports = (io) => {
       }
       const nombre = Object.keys(joueurConnectes).length;
       if (nombre < JOUEURS_MIN) {
-        socket.emit('erreur', { message: `Il faut au moins ${JOUEURS_MIN} joueurs pour lancer.` });
+        socket.emit('erreur', { message: `Il faut au moins ${JOUEURS_MIN} joueurs.` });
         return;
       }
-      if (partieEnCours) {
-        socket.emit('erreur', { message: 'Une partie est déjà en cours.' });
+      if (partieEnCours || countdownEnCours) {
+        socket.emit('erreur', { message: 'La partie démarre déjà.' });
         return;
       }
       demarrerPartie();
@@ -186,7 +204,8 @@ module.exports = (io) => {
         nom: joueur.nom,
         message: data.message,
         heure: new Date().toLocaleTimeString('fr-FR', {
-          hour: '2-digit', minute: '2-digit'
+          hour: '2-digit',
+          minute: '2-digit'
         })
       });
     });
@@ -198,7 +217,6 @@ module.exports = (io) => {
         console.log(`🔴 ${joueur.nom} s'est déconnecté`);
         delete joueurConnectes[socket.id];
 
-        // Si l'hôte part, le suivant devient hôte
         if (socket.id === hote) {
           const restants = Object.keys(joueurConnectes);
           hote = restants.length > 0 ? restants[0] : null;
@@ -235,6 +253,7 @@ module.exports = (io) => {
         io.to('salle-jeu').emit('partie-demarree', {
           message: 'La partie commence !'
         });
+
         const dureepartie = (100 * 15 + 30) * 1000;
         setTimeout(() => {
           const classement = getClassement();
@@ -261,6 +280,7 @@ module.exports = (io) => {
   function reinitialiserSalle() {
     joueurConnectes = {};
     partieEnCours = false;
+    countdownEnCours = false;
     hote = null;
     console.log('🔄 Salle réinitialisée — prête pour une nouvelle partie');
     io.to('salle-jeu').emit('salle-reinitialise', {
